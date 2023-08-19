@@ -1,15 +1,17 @@
-import numpy as np
-import random
-import math
-import nsl_request
-import nsl_placement
-import substrate_graphs
 import copy
-import calculate_metrics 
-import ql
-import dql
-#import telegram_bot as bot
+import math
+import random
+# import telegram_bot as bot
 import time
+
+import numpy as np
+import ql
+
+import calculate_metrics
+import dql
+import nsl_placement
+import nsl_request
+import substrate_graphs
 
 # import bisect
 #simulation parameters
