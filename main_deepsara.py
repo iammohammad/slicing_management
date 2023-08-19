@@ -9,15 +9,15 @@ import nsl_placement
 import nsl_request
 import substrate_graphs
 
-#simulation parameters
+#  simulation parameters
 # seed = 0
-repetitions = 33 #33
+repetitions = 33  #  33
 twindow_length = 1
 
 embb_arrival_rate = 0
 urllc_arrival_rate = 0
 miot_arrival_rate = 0 
-arrival_rates = [20] #[100,80,60,40,30,25,20,15,10,7,5,3,1] #20
+arrival_rates = [20]  #  [100,80,60,40,30,25,20,15,10,7,5,3,1] #20
 
 mean_operation_time = 15
 
@@ -26,14 +26,14 @@ centralized_initial = 0
 bw_initial = 0
 agente = None
 
-#RL-specific parameters
-episodes = 350 #240
+#  RL-specific parameters
+episodes = 350   # 240
 
 avble_edge_size = 10
 avble_central_size = 10
 avble_bw_size = 10
 
-pct_inst_embb_size = 10 #porcentaje de slices instanciados de tipo embb
+pct_inst_embb_size = 10   # porcentaje de slices instanciados de tipo embb
 pct_inst_urllc_size = 10
 pct_inst_miot_size = 10
 
@@ -42,20 +42,11 @@ pct_arriv_urllc_size = 10
 pct_arriv_miot_size = 10
 
 # n_states = avble_edge_size*avble_central_size
-#n_states = avble_edge_size*avble_central_size*avble_bw_size
-#n_states = avble_edge_size*avble_central_size*avble_bw_size*pct_inst_embb_size*pct_inst_urllc_size*pct_inst_miot_size
+#  n_states = avble_edge_size*avble_central_size*avble_bw_size
+#  n_states = avble_edge_size*avble_central_size*avble_bw_size*pct_inst_embb_size*pct_inst_urllc_size*pct_inst_miot_size
 n_states = avble_edge_size*avble_central_size*avble_bw_size*pct_inst_embb_size*pct_inst_urllc_size*pct_inst_miot_size*pct_arriv_embb_size*pct_arriv_urllc_size*pct_arriv_miot_size
 
-# #30 actions:
-# actions = [
-# (1,1,1),(0.75,1,1),(1,0.75,1),(1,1,0.75),(0.75,0.75,1),(1,0.75,0.75),(0.75,1,0.75),
-# (0.75,1,0.5),(0.5,1,0.75),(1,0.75,0.5),(0.5,0.75,1),
-# (0.5,1,1),(1,1,0.5),(1,0.5,1),(0.5,1,0.5),(0.5,0.5,1),(1,0.5,0.5),
-# (0.25,1,1),(1,1,0.25),(0.25,1,0.25),(0.1,1,1),(1,1,0.1),(0.1,1,0.1),(0.1,1,0.75),
-# (0.75,1,0.25),(0.25,1,0.75),(1,0.75,0.25),(0.25,0.75,1),(0.5,1,0.25),(0.25,1,0.5)
-# ]
-
-#30actsv2.2
+#  30actsv2.2
 actions = [
 (1,1,1),
 (0.75,1,1),(1,0.75,1),(1,1,0.75),(1,0.75,0.75),(0.75,1,0.75),
@@ -188,39 +179,28 @@ class Sim:
 
 
     def add_event(self, evt):        
-        request = {}
-        #encontrar indice y adicionar evt en esa posicion
-        # index = 0
-        # for i in range(len(self.eventos)):
-        #     if self.eventos[i].inicio > evt.inicio: 
-        #         index = i 
-        #         break
-        #     else:
-        #         index = i+1 
+
         index = self.binary_search(self.eventos, 0, len(self.eventos)-1, evt.inicio)
         self.eventos = self.eventos[:index] + [evt] + self.eventos[index:] 
-        # self.eventos.insert(index,evt)
-        # self.eventos[index:index] = [evt]
+
 
         if evt.tipo == "arrival":            
             #agregar nslrs en window list
             self.total_reqs += 1
-            service_type = evt.extra["service_type"]#
-            request = nsl_request.get_nslr(self.total_reqs,service_type,mean_operation_time)#
+            service_type = evt.extra["service_type"]
+            request = nsl_request.get_nslr(self.total_reqs,service_type,mean_operation_time)
 
             if evt.extra["service_type"] == "embb":
                 self.total_embb_reqs += 1
-                self.window_req_list[0].append(copy.deepcopy(request))#
+                self.window_req_list[0].append(copy.deepcopy(request))
             elif evt.extra["service_type"] == "urllc":
                 self.total_urllc_reqs += 1
-                self.window_req_list[1].append(copy.deepcopy(request))#
+                self.window_req_list[1].append(copy.deepcopy(request))
             else: #evt.extra["service_type"] == "miot":
                 self.total_miot_reqs += 1
-                self.window_req_list[2].append(copy.deepcopy(request))#
+                self.window_req_list[2].append(copy.deepcopy(request))
 
-            #service_type = evt.extra["service_type"]
-            #request = nsl_request.get_nslr(self.total_reqs,service_type,mean_operation_time)
-            #self.window_req_list.append(copy.deepcopy(request))
+
 
     def print_eventos(self):
         print("HORARIO: ",self.horario,"\nTotal Eventos:",len(self.eventos))
@@ -470,23 +450,9 @@ def resource_allocation(cn): #cn=controller
              
     return step_profit,step_node_profit,step_link_profit,step_embb_profit,step_urllc_profit,step_miot_profit,step_total_utl,step_node_utl,step_links_bw_utl,step_edge_cpu_utl,step_central_cpu_utl
 
-def get_code(value):   
+def get_code(value):   #para granularidad de 10 (100/10) -> (10,20,30,...100)
     cod = 0
     value = value*100
-    # #para granularidad de 5 (100/5) -> (20,40,60,80,100)
-    # if value <= 20:
-    #     cod = 0
-    # elif value <= 40:
-    #     cod = 1
-    # elif value <= 60:
-    #     cod = 2
-    # elif value <= 80:
-    #     cod = 3    
-    # else:
-    #     cod = 4
-    # return cod
-
-    #para granularidad de 10 (100/10) -> (10,20,30,...100)
     if value <= 10:
         cod = 0
     elif value <= 20:
@@ -508,8 +474,6 @@ def get_code(value):
     else:
         cod = 9
     return cod
-    
-    #return value
 
 def translateStateToIndex(state):
     '''
@@ -880,9 +844,7 @@ def main():
             f.close()
 
 if __name__ == '__main__':
-    #bot.sendMessage("Simulation starts!")
     start = time.time()
     main()
     end = time.time()
-    # bot.sendMessage("Simulation finishes!")
-    # bot.sendMessage("total time: " + str(end-start))
+
