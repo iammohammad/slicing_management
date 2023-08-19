@@ -682,16 +682,7 @@ def prepare_sim(s):
 
                                 
 def main():
-                                              
-# ▀████▄     ▄███▀     ██     ▀████▀███▄   ▀███▀
-#   ████    ████      ▄██▄      ██   ███▄    █  
-#   █ ██   ▄█ ██     ▄█▀██▄     ██   █ ███   █  
-#   █  ██  █▀ ██    ▄█  ▀██     ██   █  ▀██▄ █  
-#   █  ██▄█▀  ██    ████████    ██   █   ▀██▄█  
-#   █  ▀██▀   ██   █▀      ██   ██   █     ███  
-# ▄███▄ ▀▀  ▄████▄███▄   ▄████▄████▄███▄    ██ 
-                                                  
-                                                      
+
     global edge_initial
     global centralized_initial
     global bw_initial
@@ -794,8 +785,6 @@ def main():
                 urllc_utl_rep[j].append(controller.urllc_utl)
                 miot_utl_rep[j].append(controller.miot_utl)
 
-            #bot.sendMessage("Repetition " + str(i) + " finishes!")
-            
             f = open("deepsara_"+str(m)+"_16BA_9de10sta_30actv22_wWWWW2_maxexpl05_btchsz15_rpsrtsz400_anrate1-400_1h150ns_350epi_prioritizerv6.txt","w+")
 
             f.write("Repetition: "+str(i)+"\n")
