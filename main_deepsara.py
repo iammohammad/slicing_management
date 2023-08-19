@@ -1,26 +1,18 @@
 import copy
 import math
 import random
-# import telegram_bot as bot
 import time
-
 import numpy as np
-import ql
-
 import calculate_metrics
 import dql
 import nsl_placement
 import nsl_request
 import substrate_graphs
 
-# import bisect
 #simulation parameters
 # seed = 0
 repetitions = 33 #33
 twindow_length = 1
-# embb_arrival_rate = 10 #5#1#2 #reqXsecond
-# urllc_arrival_rate = 40 #5#2.5 #reqXsecond
-# miot_arrival_rate = 10 #5#1#2 #reqXsecond
 
 embb_arrival_rate = 0
 urllc_arrival_rate = 0
