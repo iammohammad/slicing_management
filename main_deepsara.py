@@ -11,13 +11,13 @@ import substrate_graphs
 
 #  simulation parameters
 # seed = 0
-repetitions = 33  #  33
-twindow_length = 1
+repetitions = 33  #  33 تعداد تکرار برای اطمینان از صحت شبیه سازی 
+twindow_length = 1 #  با افزایش دوبرابری تایم ویندو تعداد استپها در هر اپیزود نصف میشوند 
 
 embb_arrival_rate = 0
 urllc_arrival_rate = 0
 miot_arrival_rate = 0 
-arrival_rates = [20]  #  [100,80,60,40,30,25,20,15,10,7,5,3,1] #20
+arrival_rates = [20]  #  [100,80,60,40,30,25,20,15,10,7,5,3,1] #20 نرخ های مختلفی که در هر اپیزود شبیه سازی میشوند 
 
 mean_operation_time = 15
 
@@ -27,13 +27,13 @@ bw_initial = 0
 agente = None
 
 #  RL-specific parameters
-episodes = 350   # 240
+episodes = 350   # 240 تعداد اپیزود هایی که برای یادگیری در نظر گرفته شده است 
 
 avble_edge_size = 10
 avble_central_size = 10
 avble_bw_size = 10
 
-pct_inst_embb_size = 10   # porcentaje de slices instanciados de tipo embb
+pct_inst_embb_size = 10   # درصد برش های نمونه از نوع embb
 pct_inst_urllc_size = 10
 pct_inst_miot_size = 10
 
@@ -44,9 +44,10 @@ pct_arriv_miot_size = 10
 # n_states = avble_edge_size*avble_central_size
 #  n_states = avble_edge_size*avble_central_size*avble_bw_size
 #  n_states = avble_edge_size*avble_central_size*avble_bw_size*pct_inst_embb_size*pct_inst_urllc_size*pct_inst_miot_size
+#  تعدا حالاتی که شبکه میتواند داشته باشد در این حالت برابر 10 به توان 9 در نظر گرفته شده است 
 n_states = avble_edge_size*avble_central_size*avble_bw_size*pct_inst_embb_size*pct_inst_urllc_size*pct_inst_miot_size*pct_arriv_embb_size*pct_arriv_urllc_size*pct_arriv_miot_size
 
-#  30actsv2.2
+#  list of tuples of 30 acts
 actions = [
 (1,1,1),
 (0.75,1,1),(1,0.75,1),(1,1,0.75),(1,0.75,0.75),(0.75,1,0.75),
@@ -56,33 +57,6 @@ actions = [
 (0.25,1,0.1), (0.1,1,0.25), (0.5,1,0.1), (0.1,1,0.5), (0.75,1,0.1), (0.1,1,0.75),
 (0.25,1,0.5), (0.5,1,0.25), (0.25,1,0.75), (0.75,1,0.25)  
 ]
-
-
-#20 actions:
-#actions = [(1,1,1),(0.75,1,1),(1,0.75,1),(1,1,0.75),(0.75,0.75,1),(1,0.75,0.75),(0.75,1,0.75),(0.75,1,0.5),(0.5,1,0.75),(1,0.75,0.5),(0.5,0.75,1),
-#(0.5,1,1),(1,1,0.5),(0.5,1,0.5),(0.75,1,0.25),(0.25,1,0.75),(1,0.75,0.25),(0.25,0.75,1),(0.5,1,0.25),(0.25,1,0.5)]
-
-#19 actions:
-#actions =  [(1,1,1),(0.75,1,1),(1,0.75,1),(1,1,0.75),(0.75,0.75,1),(1,0.75,0.75),(0.75,1,0.75),
-            #(0.5,1,1),(1,0.5,1),(1,1,0.5),(0.5,0.5,1),(1,0.5,0.5),(0.5,1,0.5),
-            #(0.75,0.5,1),(0.75,1,0.5),(0.5,0.75,1),(1,0.75,0.5),(0.5,1,0.75),(1,0.5,0.75)]
-
-#15 actions:
-# actions =  [(1,1,1),(0.75,1,1),(1,0.75,1),(1,1,0.75),(0.75,0.75,1),(1,0.75,0.75),(0.75,1,0.75),
-#             (0.5,1,1),(1,0.5,1),(1,1,0.5),(0.5,1,0.5),
-#             (0.75,1,0.5),(0.5,0.75,1),(1,0.75,0.5),(0.5,1,0.75)]
-
-# 13 actions:
-#actions =  [(1,1,1),(0.75,1,1),(1,0.75,1),(1,1,0.75),(0.75,0.75,1),(1,0.75,0.75),(0.75,1,0.75),
-             #(0.5,1,1),(1,0.5,1),(1,1,0.5),(0.5,0.5,1),(1,0.5,0.5),(0.5,1,0.5)]
-
-#10 actions:
-# actions =  [(1,1,1),(0.75,1,1),(1,1,0.75),(1,0.75,1),(0.75,1,0.75),
-#             (0.75,1,0.5),(0.5,1,0.75),(0.5,1,1),(1,1,0.5),(0.5,1,0.5)]
-#actions = [(1,1,1),(0.75,1,1),(1,1,0.75),(0.75,1,0.75),(0.75,1,0.5),(0.5,1,0.75),(0.5,1,1),(1,1,0.5),(0.5,1,0.5),(0.5,1,0.25)]
-
-#7actions:
-#actions = [(1,1,1),(0.75,1,1),(1,1,0.75),(0.75,1,0.75),(0.75,1,0.5),(0.5,1,0.5),(0.5,1,0.25)] #list of tuples
 
 n_actions = len(actions)
 
