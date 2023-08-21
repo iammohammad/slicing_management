@@ -106,31 +106,32 @@ class Controlador:
 
 class Sim:
     def __init__(self):
-        self.eventos = []
+        self.eventos = [] # تعداد کل ایونت ها 
         self.total_events = 0
-        self.window_req_list = [[],[],[]] #
+        self.window_req_list = [[],[],[]] #درخواست های هر دسته اسلایس در 3 صف جدا قرار میگیرد.
         #self.window_req_list = []
-        self.granted_req_list = []
-        self.horario = 0
-        self.run_till = -1
-        self.total_reqs = 0
+        self.granted_req_list = []# درخواست های پذیرفته شده 
+        self.horario = 0  #  زمان استارت
+        self.run_till = -1  
+        self.total_reqs = 0  # مجموع درخواست ها 
         self.total_embb_reqs = 0
         self.total_urllc_reqs = 0
         self.total_miot_reqs = 0
-        self.attended_reqs = 0
+        self.attended_reqs = 0   
         self.accepted_reqs = 0
         self.embb_accepted_reqs = 0
         self.urllc_accepted_reqs = 0
         self.miot_accepted_reqs = 0
         self.current_instatiated_reqs = [0,0,0] #[embb,urllc,miot]
                    
-
+    #  تعیین مدت زمان ران شدن 
     def set_run_till(self, t):
         self.run_till = t
 
     # def set_substrate(self,substrate):
     #     self.substrate = substrate
 
+    #  ساخت رویداد ورودی به شرط چک کردن زمان استارت آن 
     def create_event(self, tipo, inicio, extra=None, f=None):
         if inicio<self.horario:
             print("***false")
@@ -139,6 +140,7 @@ class Sim:
         e = Evento(tipo, inicio, extra, f)
         return e
 
+    #  در آرایه ای که ار و ال ابتدا و انتهای ان هستند به دنبال ایندکسی می گردد که برابر ایکس باشد
     def binary_search (self, arr, l, r, x):
         if r >= l:       
             mid = int(l + (r - l)/2)
@@ -151,14 +153,14 @@ class Sim:
         else:             
             return l
 
-
+    #  با توجه به تایم استارت جایگاه درخواست را با استفاده از باینری سرچ مشخص کرده و در آنجا قرار می دهد
     def add_event(self, evt):        
 
         index = self.binary_search(self.eventos, 0, len(self.eventos)-1, evt.inicio)
         self.eventos = self.eventos[:index] + [evt] + self.eventos[index:] 
 
 
-        if evt.tipo == "arrival":            
+        if evt.tipo == "arrival":   #  با توجه به           
             #agregar nslrs en window list
             self.total_reqs += 1
             service_type = evt.extra["service_type"]
