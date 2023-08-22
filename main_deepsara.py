@@ -160,15 +160,14 @@ class Sim:
         self.eventos = self.eventos[:index] + [evt] + self.eventos[index:] 
 
 
-        if evt.tipo == "arrival":   #  با توجه به           
-            #agregar nslrs en window list
+        if evt.tipo == "arrival":   #  با توجه به تایپ رخداد که باید از نوع ورود باشد نسبت به دسته بندی آن ها اقدام میکند .           
             self.total_reqs += 1
             service_type = evt.extra["service_type"]
-            request = nsl_request.get_nslr(self.total_reqs,service_type,mean_operation_time)
+            request = nsl_request.get_nslr(self.total_reqs,service_type,mean_operation_time)  #  با استفاده از ماژول nsl_req ، از فانکشن get_nslr  برای دریافت ریکوئست استفاده میکند .
 
             if evt.extra["service_type"] == "embb":
                 self.total_embb_reqs += 1
-                self.window_req_list[0].append(copy.deepcopy(request))
+                self.window_req_list[0].append(copy.deepcopy(request))  #  به ایندکس
             elif evt.extra["service_type"] == "urllc":
                 self.total_urllc_reqs += 1
                 self.window_req_list[1].append(copy.deepcopy(request))
@@ -186,7 +185,7 @@ class Sim:
 
         print("\n")
 
-    def get_proximo_evento(self):
+    def get_proximo_evento(self):  #  با چک کردن طول لیست در صورت وجود رویداد بعدی آن را پردازش و یکی از درخواست ها حذف می کند .
         if len(self.eventos)==0:
             return None
         else:
@@ -194,7 +193,7 @@ class Sim:
             self.horario = p.inicio
             return p
 
-    def run(self,c):
+    def run(self,c):  #  تا زمانی که تایم کمتر از زمان پایان شبیه سازی باشد درخواست بعدی را اجرا میکند 
         # self.print_eventos()
         while self.horario<self.run_till:
             #self.print_eventos()
@@ -203,7 +202,7 @@ class Sim:
                 return    
             p.function(c,p)
  
-def aleatorio(seed):
+def aleatorio(seed):  # اعداد تصادفی در بازه [0, 1)  تولید میکند
     m = 2**34
     c = 251
     a = 4*c+1
@@ -211,8 +210,8 @@ def aleatorio(seed):
     rand_number = (((a*seed)+b)%m)/m
     return rand_number
 
-def get_interarrival_time(arrival_rate):
-    seed = random.randint(10000000,8000000000)#cambiar solo para cada repetición
+def get_interarrival_time(arrival_rate):  #  با استفاده از اعداد تصادفی ساخته شده و تابع نمایی تایم ورود هر رویداد را ایجاد می کند
+    seed = random.randint(10000000,8000000000)
     p = aleatorio(seed) 
     # print(p)     
     inter_arrival_time = -math.log(1.0 - p)/arrival_rate #the inverse of the CDF of Exponential(_lamnbda)
@@ -225,8 +224,8 @@ def filtro(window_req_list,action):
     granted_req_list = []
     auxiliar_list = []
     for req in window_req_list:
-        if (req.service_type == "embb" and req.bandera <= actions[action][0]*100) or (req.service_type == "urllc" and req.bandera <= actions[action][1]*100) or (req.service_type == "miot" and req.bandera <= actions[action][2]*100):
-            # print("**agregando request...")
+        if (req.service_type == "embb" and req.bandera <= actions[action][0]*100) or (req.service_type == "urllc" and req.bandera <= actions[action][1]*100) or (req.service_type == "miot" and req.bandera <= actions[action][2]*100):  #  باندرا عددی رندم بین 1 تا 100 است که هر درخواست اسلایسینگ آن را داراست که این عدد با اکشن های تعریف شده مقایسه میشود
+            # print("**agregando request...")  # اگر اکشن کمتر از باندرای تصادفی ای که برای اسلایس انتخاب شده باشد درخواست رد می شود 
             granted_req_list.append(req)
     #     else:
     #         auxiliar_list.append(req)
@@ -235,75 +234,20 @@ def filtro(window_req_list,action):
 
     return granted_req_list
 
-def prioritizer_v1(window_req_list,action_index): ##v1
+def prioritizer(window_req_list,action_index): 
     #print("****prioritizing...")
-    action = actions[action_index]
-    # embb_list = []
-    # urllc_list = []
-    # miot_list = []
-    granted_req_list = []
-
-    #Conversion de accion en proportion ej: #action = (0.75,1,0.25) -> (3,4,1) reresenta 3:4:1
-    translated_action = []
-    for i in action:
-        if i == 1:
-            translated_action.append(4)
-        elif i == 0.75:
-            translated_action.append(3)
-        elif i == 0.5:
-            translated_action.append(2)
-        else:
-            translated_action.append(1)
-    
-    #se agrupan las NSLRs por service_type
-    # for req in window_req_list: 
-    #     if req.service_type == "embb":
-    #         embb_list.append(req)
-    #     elif req.service_type == "urllc":
-    #         urllc_list.append(req)
-    #     else:
-    #         miot_list.append(req)
-
-    #mientras haya peticiones en las listas se las adiciona a la lista priorizada        
-    embb_list = window_req_list[0]
-    urllc_list = window_req_list[1]
-    miot_list = window_req_list[2]
-    while embb_list or urllc_list or miot_list:
-        #for value in action:
-        for i in range(0,translated_action[0]):
-            if embb_list:
-                granted_req_list.append(embb_list[0])
-                embb_list.pop(0)
-
-        for i in range(0,translated_action[1]):
-            if urllc_list:
-                granted_req_list.append(urllc_list[0])
-                urllc_list.pop(0)
-   
-        for i in range(0,translated_action[2]):
-            if miot_list: 
-                granted_req_list.append(miot_list[0])
-                miot_list.pop(0)        
-
-    return granted_req_list
-
-def takeFirst(elem):
-    return elem[0]
-
-def prioritizer(window_req_list,action_index): #v2
-    #print("****prioritizing...")
-    action = actions[action_index]
-    action2 = []
+    action = actions[action_index]  #  [0.75,0.75,0]
+    action2 = []  #  [[], [], []] به صورت دسته شده از یزرگ به کوچک در هر ایندکس، هر ایندکس برای یک اسلایس است 
     granted_req_list = []
     remaining_req_list = []
     
     #action = (0.75,1,0.25) -> (cant1,cant2,cant3) 
-    #traducir action en porcentage a cantidades (entero más cercano)
-    action2.append([action[0],round(action[0]*len(window_req_list[0])),0]) #[pctg,cant,tipo] ej:[0.75,75,0]
+    #اکشن را از درصد به عدد صحیحی که از حاصل ضرب طول بدست آمده رند میکند 
+    action2.append([action[0],round(action[0]*len(window_req_list[0])),0]) #[pctg,cant1,tipo] ej:[0.75,75,0]
     action2.append([action[1],round(action[1]*len(window_req_list[1])),1])
     action2.append([action[2],round(action[2]*len(window_req_list[2])),2])
 
-    #de acuerdo a "action", ordenar "action2"
+    #از بزرگ به کوچک دسته بندی می کند 
     action2.sort(key=takeFirst,reverse=True)
 
     for j in action2:
