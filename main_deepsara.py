@@ -265,18 +265,18 @@ def prioritizer(window_req_list,action_index):
     return granted_req_list, remaining_req_list #v6
     #return granted_req_list+remaining_req_list, remaining_req_list #v1
 
-def update_resources(substrate,nslr,kill):
+def update_resources(substrate,nslr,kill):   مسئول به روز رسانی تخصیص منابع در یک شبکه است که در دو بخش وی ان اف ها و لینک ها آن را انجام میدهد 
     
     nodes = substrate.graph["nodes"]
     links = substrate.graph["links"]   
-    for vnf in nslr.nsl_graph_reduced["vnodes"]:#se recorre los nodos del grafo reducido del nslr aceptado    
+    for vnf in nslr.nsl_graph_reduced["vnodes"]: 
         if "mapped_to" in vnf:
-            n = next(n for n in nodes if (n["id"] == vnf["mapped_to"] and n["type"]==vnf["type"]) )# 
+            n = next(n for n in nodes if (n["id"] == vnf["mapped_to"] and n["type"]==vnf["type"]) ) 
             if vnf["type"] == 0:
                 tipo = "centralized_cpu"
             else:
                 tipo = "edge_cpu"
-            if kill: #if it is kill process, resources are free again
+            if kill: #  در صورت کیل منابع ازاد میشوند 
                 
                 n["cpu"] = n["cpu"] + vnf["cpu"]
                 substrate.graph[tipo] += vnf["cpu"]
@@ -285,12 +285,13 @@ def update_resources(substrate,nslr,kill):
                 n["cpu"] = n["cpu"] - vnf["cpu"] 
                 substrate.graph[tipo] -= vnf["cpu"]
     for vlink in nslr.nsl_graph_reduced["vlinks"]:
-        try:#cuando dos vnfs se instancian en un mismo nodo no hay link
+        try:  #  اگر در یک گره باشند دیگر لینکی لازم ندارند
             path = vlink["mapped_to"]            
         except KeyError:
             path=[]
         for i in range(len(path)-1):
             try:
+                #  اگر بتونه لینکی با مشخصات مشخص شده پیدا بکند که لینک ساخته میشود در غیر اینصورت و با بررسی تمام لینک ها ، ایتریشن متوقف میشود
                 l = next(l for l in links if ( (l["source"]==path[i] and l["target"]==path[i+1]) or (l["source"]==path[i+1] and l["target"]==path[i]) ) )              
                 if kill:
                     l["bw"] += vlink["bw"]
