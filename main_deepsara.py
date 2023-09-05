@@ -505,7 +505,7 @@ def get_state(substrate,simulation):    # لیستی با 9 ایندکس سام�
 
     return state
 
-def func_arrival(c,evt): #NSL arrival
+def func_arrival(c,evt): # در این تابع درخواست اطلاعات درخواست ورودی ثبت می شود 
     s = c.simulation
     # print("**/",evt.extra["arrival_rate"])
     arrival_rate = evt.extra["arrival_rate"]
@@ -516,7 +516,7 @@ def func_arrival(c,evt): #NSL arrival
 
 contador_termination = 0
 
-def func_terminate(c,evt):
+def func_terminate(c,evt):  # با اجرای این تابع یک رویداد به کارش پایان میده و منابع آزاد می شوند 
     global contador_termination
     sim = c.simulation
     contador_termination +=1
@@ -532,14 +532,14 @@ def func_terminate(c,evt):
 
 contador_windows = 0
 def func_twindow(c,evt):
-    #la venta de tiempo ha expirado. Las nslrs recolectadas hasta ahora seran analizadas para su admision
+    #  the time sale has expired. The nslrs collected so far will be analyzed for admission.
     global contador_windows
     sim = c.simulation 
     contador_windows += 1
     
     if evt.extra["first_state"]:
         #first state index
-        #todos los recursos al 100% (con granularidad de 5)
+        #all resources at 100% (with granularity of 5)
         state = get_state(c.substrate,c.simulation)
         
         #s = translateStateToIndex(state)
