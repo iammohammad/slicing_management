@@ -302,9 +302,9 @@ def update_resources(substrate,nslr,kill):   مسئول به روز رسانی �
             except StopIteration:
                 pass
 
-def resource_allocation(cn): #cn=controller
-    #hace allocation para el conjunto de nslrs capturadas en una ventana de tiempo
-    #las metricas calculadas aqui corresponden a un step
+def resource_allocation(cn): #  cn=controller   #  در این قسمت با توجه به منابع تخصیص داده شده میزان سود با توجه به فرموا مورد نظر محاسبه می شود 
+    #  makes allocation for the set of nslrs captured in a time window
+    #  the metrics calculated here correspond to a step
      
     sim = cn.simulation
     substrate = cn.substrate
@@ -331,22 +331,22 @@ def resource_allocation(cn): #cn=controller
         sim.attended_reqs += 1        
         rejected = nsl_placement.nsl_placement(req,substrate)#mapping
         if not rejected: 
-            #instantiation y adicion de evento de termination
+            #  در صورتی رد نشود به رویداد ها اضافه می شود 
             req.set_end_time(sim.horario+req.operation_time)
             graph = req.nsl_graph_reduced
             update_resources(substrate,req,False)#instantiation, ocupar recursos
             evt = sim.create_event(tipo="termination",inicio=req.end_time, extra=req, f=func_terminate)
             sim.add_event(evt) 
 
-            #calculo de metricas (profit, acpt_rate, contadores)            
+            #  محاسبه معیارها (سود، نرخ_پذیرش، شمارنده)           
             sim.accepted_reqs += 1
             profit_nodes = calculate_metrics.calculate_profit_nodes(req,end_simulation_time)
             profit_links = calculate_metrics.calculate_profit_links(req,end_simulation_time)*10    
-            step_profit += (profit_nodes + profit_links)/max_profit #the total profit in this step is the reward
+            step_profit += (profit_nodes + profit_links)/max_profit #  the total profit in this step is the reward
             step_link_profit += profit_links/max_link_profit
             step_node_profit += profit_nodes/max_node_profit
-            step_edge_profit = 0 #ajustar
-            step_central_profit = 0#ajustar
+            step_edge_profit = 0 #  قابل تنظیم به صورت دلخواه 
+            step_central_profit = 0 #   قابل تنظیم به صورت دلخواه 
 
             if req.service_type == "embb":
                 sim.current_instatiated_reqs[0] += 1
