@@ -371,7 +371,7 @@ def resource_allocation(cn): #  cn=controller   #  در این قسمت با ت�
              
     return step_profit,step_node_profit,step_link_profit,step_embb_profit,step_urllc_profit,step_miot_profit,step_total_utl,step_node_utl,step_links_bw_utl,step_edge_cpu_utl,step_central_cpu_utl
 
-def get_code(value):   #para granularidad de 10 (100/10) -> (10,20,30,...100)
+def get_code(value):
     cod = 0
     value = value*100
     if value <= 10:
@@ -396,9 +396,9 @@ def get_code(value):   #para granularidad de 10 (100/10) -> (10,20,30,...100)
         cod = 9
     return cod
 
-def translateStateToIndex(state):
+def translateStateToIndex(state):  
     '''
-    returns state index from a given state code
+هدف این تابع ایجاد یک شاخص منحصر به فرد برای یک وضعیت معین بر اساس پارامترهای مختلف آن است.
     '''
     cod_avble_edge = state[0]
     cod_avble_central = state[1]
@@ -439,7 +439,7 @@ def translateStateToIndex(state):
     return int(index)
 
 
-def get_state(substrate,simulation):    
+def get_state(substrate,simulation):    # لیستی با 9 ایندکس سامل اعداد 0 تا 9 میسازه و با توجه به این حالات  در تابع فوق ایندکسی به دست می آید  
     cod_avble_edge = get_code(substrate.graph["edge_cpu"]/edge_initial)
     cod_avble_central = get_code(substrate.graph["centralized_cpu"]/centralized_initial)
     cod_avble_bw = get_code(substrate.graph["bw"]/bw_initial)
