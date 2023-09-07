@@ -266,7 +266,7 @@ def prioritizer(window_req_list,action_index):   #  لیست درخواست ها
     return granted_req_list, remaining_req_list #v6
     #return granted_req_list+remaining_req_list, remaining_req_list #v1
 
-def update_resources(substrate,nslr,kill):   مسئول به روز رسانی تخصیص منابع در یک شبکه است که در دو بخش وی ان اف ها و لینک ها آن را انجام میدهد 
+def update_resources(substrate,nslr,kill):   #   مسئول به روز رسانی تخصیص منابع در یک شبکه است که در دو بخش وی ان اف ها و لینک ها آن را انجام میدهد 
     
     nodes = substrate.graph["nodes"]
     links = substrate.graph["links"]   
