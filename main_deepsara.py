@@ -589,7 +589,7 @@ def func_twindow(c,evt):  #  پس از بررسی استیت با توجه به 
     sim.window_req_list = [[],[],[]] #
     #sim.window_req_list = []
     sim.granted_req_list = [] 
-  #  چهار ایونت داریم که سه تای اون مربوط به سه اسلایس مختلف هست و یکی هم مربوط به تایم ویندو که تایم ویندو در نهایت منجر به حالت پایانی که در بالا ذکر شده می شود   
+  #  چهار ایونت داریم که سه تای اون مربوط به سه اسلایس مختلف و برای حالت ورودی هست و یکی هم مربوط به تایم ویندو که تایم ویندو در نهایت منجر به حالت پایانی که در بالا ذکر شده می شود   
 def prepare_sim(s):
     evt = s.create_event(tipo="arrival",inicio=s.horario+get_interarrival_time(embb_arrival_rate),extra={"service_type":"embb","arrival_rate":embb_arrival_rate},f=func_arrival)
     s.add_event(evt)
@@ -641,7 +641,7 @@ def main():
         urllc_utl_rep = []
         miot_utl_rep = []    
         
-        for i in range(episodes):
+        for i in range(episodes):  #  هر بار رپیتیشن شامل تعدادی مشخص اپیزود است که آن را تعیین میکنیم و در ادامه با توجه به تایم ویندو تعداد استپ در هر اپیزود مشخص می شود 
             total_profit_rep.append([])
             link_profit_rep.append([])
             node_profit_rep.append([])
@@ -670,7 +670,7 @@ def main():
             agente = dql.Agent(9,n_actions) # پارامتر اول تعداد حالات که اینجا برابر نه و پارامتر دوم تعداد اکشن ها است که برابر سی است 
 
             for j in range(episodes):
-                agente.handle_episode_start()
+                agente.handle_episode_start()  #   در ماژول دی کیو ال 
 
                 print("\n","episode:",j,"\n")
                 controller = None
@@ -680,8 +680,8 @@ def main():
                 edge_initial = controller.substrate.graph["edge_cpu"]
                 centralized_initial = controller.substrate.graph["centralized_cpu"]
                 bw_initial = controller.substrate.graph["bw"]
-                controller.simulation.set_run_till(15)  
-                prepare_sim(controller.simulation)            
+                controller.simulation.set_run_till(15)   #  مدت زمان اجرا را نشان میدهد و بر تعداد تایم ویندو تقسیم می شود
+                prepare_sim(controller.simulation)     #  از کلاس کنترالادور تابع سیمولیشن و سپس تابع سیم فراخوانی و در پریپیر سیمولیشن قرار می گیرد       
                 controller.run()        
 
                 total_profit_rep[j].append(controller.total_profit)
