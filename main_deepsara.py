@@ -131,7 +131,8 @@ class Sim:
     # def set_substrate(self,substrate):
     #     self.substrate = substrate
 
-    #  ساخت رویداد ورودی به شرط چک کردن زمان استارت آن 
+    #  ساخت رویداد ورودی به شرط چک کردن زمان استارت آن
+    #  مقادیر اف و اکسترا خالی میمونن تا بعدا مقدار دهی بشن
     def create_event(self, tipo, inicio, extra=None, f=None):
         if inicio<self.horario:
             print("***false")
@@ -234,7 +235,7 @@ def filtro(window_req_list,action):
 
     return granted_req_list
 
-def prioritizer(window_req_list,action_index): 
+def prioritizer(window_req_list,action_index):   #  لیست درخواست ها به همراه اکشن را گرفته و دو لیست درخواست های پذیرفته شده و باقی مانده را بازمیگرداند
     #print("****prioritizing...")
     action = actions[action_index]  #  [0.75,0.75,0]
     action2 = []  #  [[], [], []] به صورت دسته شده از یزرگ به کوچک در هر ایندکس، هر ایندکس برای یک اسلایس است 
@@ -504,7 +505,7 @@ def get_state(substrate,simulation):    # لیستی با 9 ایندکس سام�
             ]
 
     return state
-
+  #   سه حالت در نظر میگیریم برای ایونت ها : یک ورودی دو پایانی و سه تایم ویندو 
 def func_arrival(c,evt): # در این تابع درخواست اطلاعات درخواست ورودی ثبت می شود 
     s = c.simulation
     # print("**/",evt.extra["arrival_rate"])
@@ -531,7 +532,7 @@ def func_terminate(c,evt):  # با اجرای این تابع یک رویداد 
         sim.current_instatiated_reqs[2] -= 1
 
 contador_windows = 0
-def func_twindow(c,evt):
+def func_twindow(c,evt):  #  پس از بررسی استیت با توجه به آن اکشن مناسب را انتخاب و به بخش تخصیص منابع میفرستد 
     #  the time sale has expired. The nslrs collected so far will be analyzed for admission.
     global contador_windows
     sim = c.simulation 
@@ -551,8 +552,8 @@ def func_twindow(c,evt):
         a = evt.extra["action"]
         #print("##agent",agente.last_state," ",agente.last_action)        
       
-    sim.granted_req_list, remaining_req_list = prioritizer(sim.window_req_list, a) #se filtra la lista de reqs dependiendo de la accion
-    #la lista se envia al modulo de Resource Allocation
+    sim.granted_req_list, remaining_req_list = prioritizer(sim.window_req_list, a) #  the list of reqs is filtered depending on the action
+    #  the list is sent to the Resource Allocation module
     step_profit,step_node_profit,step_link_profit,step_embb_profit,step_urllc_profit,step_miot_profit,step_total_utl,step_node_utl,step_links_bw_utl,step_edge_cpu_utl,step_central_cpu_utl = resource_allocation(c)
     c.total_profit += step_profit
     c.node_profit += step_node_profit
@@ -578,7 +579,7 @@ def func_twindow(c,evt):
     
     a = a_
     s = s_
-    if contador_windows  == (sim.run_till/twindow_length) - 2:
+    if contador_windows  == (sim.run_till/twindow_length) :  #  in original code: - 2
         end_state = True
     else:
         end_state = False
@@ -588,7 +589,7 @@ def func_twindow(c,evt):
     sim.window_req_list = [[],[],[]] #
     #sim.window_req_list = []
     sim.granted_req_list = [] 
-  
+  #  چهار ایونت داریم که سه تای اون مربوط به سه اسلایس مختلف هست و یکی هم مربوط به تایم ویندو که تایم ویندو در نهایت منجر به حالت پایانی که در بالا ذکر شده می شود   
 def prepare_sim(s):
     evt = s.create_event(tipo="arrival",inicio=s.horario+get_interarrival_time(embb_arrival_rate),extra={"service_type":"embb","arrival_rate":embb_arrival_rate},f=func_arrival)
     s.add_event(evt)
@@ -664,9 +665,9 @@ def main():
             urllc_utl_rep.append([])
             miot_utl_rep.append([])
         
-        for i in range(repetitions):
+        for i in range(repetitions):  # در مقاله 33 بار تکرار کرده است 
             #agente = ql.Qagent(0.9, 0.9, 0.9, episodes, n_states, n_actions) #(alpha, gamma, epsilon, episodes, n_states, n_actions)
-            agente = dql.Agent(9,n_actions)
+            agente = dql.Agent(9,n_actions) # پارامتر اول تعداد حالات که اینجا برابر نه و پارامتر دوم تعداد اکشن ها است که برابر سی است 
 
             for j in range(episodes):
                 agente.handle_episode_start()
