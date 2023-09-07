@@ -234,7 +234,10 @@ def filtro(window_req_list,action):
     # granted_req_list = granted_req_list + auxiliar_list 
 
     return granted_req_list
-
+    
+def takeFirst(elem):
+    return elem[0]
+    
 def prioritizer(window_req_list,action_index):   #  لیست درخواست ها به همراه اکشن را گرفته و دو لیست درخواست های پذیرفته شده و باقی مانده را بازمیگرداند
     #print("****prioritizing...")
     action = actions[action_index]  #  [0.75,0.75,0]
